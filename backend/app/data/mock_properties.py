@@ -13,7 +13,7 @@ PROPERTIES = [
         "city": "San Francisco",
         "state": "CA",
         "zip": "94102",
-        "image_url": "https://via.placeholder.com/400x300?text=Modern+Condo"
+        "image_url": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop"
     },
     {
         "id": "prop_002", 
@@ -21,7 +21,7 @@ PROPERTIES = [
         "city": "Palo Alto",
         "state": "CA",
         "zip": "94301",
-        "image_url": "https://via.placeholder.com/400x300?text=Family+Home"
+        "image_url": "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop"
     },
     {
         "id": "prop_003",
@@ -29,7 +29,7 @@ PROPERTIES = [
         "city": "Oakland",
         "state": "CA",
         "zip": "94607",
-        "image_url": "https://via.placeholder.com/400x300?text=Victorian+House"
+        "image_url": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop"
     },
     {
         "id": "prop_004",
@@ -37,7 +37,7 @@ PROPERTIES = [
         "city": "San Jose",
         "state": "CA",
         "zip": "95112",
-        "image_url": "https://via.placeholder.com/400x300?text=Ranch+Style"
+        "image_url": "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400&h=300&fit=crop"
     },
     {
         "id": "prop_005",
@@ -45,7 +45,7 @@ PROPERTIES = [
         "city": "Berkeley",
         "state": "CA",
         "zip": "94704",
-        "image_url": "https://via.placeholder.com/400x300?text=Craftsman+Home"
+        "image_url": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop"
     }
 ]
 

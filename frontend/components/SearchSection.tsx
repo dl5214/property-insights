@@ -99,15 +99,25 @@ export default function SearchSection({ onPropertySelect }: SearchSectionProps) 
                   onClick={() => onPropertySelect(property)}
                   className="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-primary-500 hover:shadow-lg transition-all text-left group"
                 >
-                  {property.image_url && (
-                    <div className="mb-3 rounded-lg overflow-hidden bg-gray-100">
+                  <div className="mb-3 rounded-lg overflow-hidden bg-gray-100">
+                    {property.image_url ? (
                       <img
                         src={property.image_url}
                         alt={property.address}
                         className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                          e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-40 flex items-center justify-center bg-gray-200"><svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg></div>'
+                        }}
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center bg-gray-200">
+                        <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
                       {property.address}

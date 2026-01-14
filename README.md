@@ -185,64 +185,13 @@ See http://localhost:8000/docs for interactive documentation.
 ## Future Enhancements
 
 **Short-term**
-- Streaming LLM responses for real-time feedback
-- Additional mock sources (Trulia, Realtor.com)
-- Historical data tracking and trend analysis
-- PDF report export
-
-**Medium-term**
 - Real API integration with Zillow/Redfin
+- Streaming LLM responses for real-time feedback
 - Database persistence for analysis history
-- User authentication and saved searches
-- Advanced conflict resolution with weighted trust scores
+- PDF report export
 
 **Long-term**
 - RAG system with real estate knowledge base
 - Fine-tuned model for real estate domain
 - Image analysis from listing photos
-- Predictive pricing and market timing models
-
-## Development
-
-**Run tests:**
-```bash
-# Backend
-cd backend
-pytest
-
-# Frontend
-cd frontend
-npm test
-```
-
-**Linting:**
-```bash
-# Backend
-cd backend
-pylint app/
-
-# Frontend
-cd frontend
-npm run lint
-```
-
-## Troubleshooting
-
-**Ollama connection issues:**
-```bash
-ollama serve
-ollama list
-```
-
-**Port conflicts:**
-```bash
-# Backend
-lsof -ti:8000 | xargs kill
-
-# Frontend
-lsof -ti:3000 | xargs kill
-```
-
-**Analysis timeout:**
-- Increase timeout in `frontend/lib/api.ts` (default: 120s)
-- Check Ollama is running: `ollama ps`
+- Predictive pricing models

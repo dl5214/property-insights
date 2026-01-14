@@ -274,10 +274,13 @@ Focus on:
 
 Be transparent about data quality issues."""
 
+        # Format price safely
+        price_str = f"${property_summary.price:,.0f}" if property_summary.price else "[DATA CONFLICT]"
+        
         prompt = f"""Provide a comprehensive analysis for this property: {address}
 
 UNIFIED PROPERTY DATA:
-- Price: ${property_summary.price:,.0f}" if property_summary.price else "[DATA CONFLICT]"}
+- Price: {price_str}
 - Bedrooms: {property_summary.bedrooms or "[MISSING]"}
 - Bathrooms: {property_summary.bathrooms or "[MISSING]"}
 - Square Feet: {property_summary.square_feet or "[MISSING]"}
