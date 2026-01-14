@@ -1,228 +1,248 @@
 # Property Insights
 
-AI-powered real estate information analysis system that transforms scattered, inconsistent property data into clear, comprehensive reports to help buyers make confident decisions.
+AI-powered real estate analysis system that integrates data from multiple sources, resolves conflicts, and delivers reliable property insights.
+
+## Problem Statement
+
+Real estate information is scattered across multiple platforms (Zillow, Redfin, public records), often with inconsistent values and missing data. This system demonstrates how AI can integrate disparate sources, identify conflicts, and provide unified, trustworthy analysis.
 
 ## Tech Stack
 
-- **Backend**: FastAPI (Python 3.9+)
-- **Frontend**: Next.js 14 (React, TypeScript)
-- **AI**: Ollama (llama3.2) - runs locally
-- **Styling**: Tailwind CSS
+- **Backend**: FastAPI, Python 3.9+
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **AI**: Ollama (llama3.2) - local LLM for data analysis
+- **Data**: Mock sources simulating Zillow, Redfin, and public records
 
-## Project Structure
+## Key Features
+
+**Multi-Source Data Integration**
+- Fetches property data from 3 simulated sources
+- Each source contains realistic inconsistencies and missing fields
+- Example conflicts: bedroom counts, price variations, square footage discrepancies
+
+**AI-Powered Conflict Resolution**
+- Analyzes all sources to identify conflicts
+- Determines most reliable value with detailed reasoning
+- Assigns confidence scores to each field
+- Explains source reliability (e.g., "Redfin data more recent than Zillow")
+
+**Comprehensive Analysis**
+- Data quality assessment with overall confidence score
+- Visual conflict resolution with AI reasoning
+- Missing information tracking
+- Actionable recommendations for verification
+
+## Architecture
 
 ```
 property-insights/
-├── backend/                    # FastAPI backend
+├── backend/
 │   ├── app/
-│   │   ├── main.py            # FastAPI app & entry point
-│   │   ├── config.py          # Configuration
-│   │   ├── models/            # Pydantic data models
-│   │   ├── services/          # Business logic
-│   │   │   ├── llm_service.py      # Ollama integration
-│   │   │   └── property_service.py # Property analysis
-│   │   └── api/routes/        # API endpoints
+│   │   ├── main.py                    # FastAPI entry point
+│   │   ├── data/
+│   │   │   ├── mock_properties.py     # Property database (5 properties)
+│   │   │   └── mock_sources.py        # 3 data sources with conflicts
+│   │   ├── models/property.py         # Pydantic data models
+│   │   ├── services/
+│   │   │   ├── llm_service.py         # Ollama integration
+│   │   │   └── property_service.py    # Multi-source analysis logic
+│   │   └── api/routes/property.py     # REST endpoints
 │   └── requirements.txt
-├── frontend/                  # Next.js frontend
-│   ├── app/                  # Next.js App Router
-│   ├── components/           # React components
-│   ├── lib/                  # API client & types
-│   └── package.json
-└── README.md
+│
+└── frontend/
+    ├── app/
+    │   ├── page.tsx                   # Main application
+    │   └── globals.css
+    ├── components/
+    │   ├── SearchSection.tsx          # Property search interface
+    │   ├── AnalysisReport.tsx         # Analysis orchestration
+    │   ├── DataSourcesView.tsx        # Source comparison
+    │   ├── ConflictResolutionView.tsx # Conflict visualization
+    │   └── InsightsView.tsx           # Key recommendations
+    └── lib/
+        ├── api.ts                     # API client
+        └── types.ts                   # TypeScript definitions
 ```
 
 ## Prerequisites
 
-1. **Python 3.9+** and **Conda** (or venv)
-   ```bash
-   python3 --version
-   conda --version
-   ```
+- Python 3.9+ (Conda or venv)
+- Node.js 18+
+- Ollama with llama3.2 model
 
-2. **Node.js 18+** and **npm**
-   ```bash
-   node --version
-   npm --version
-   ```
-
-3. **Ollama** (must be installed and running)
-   ```bash
-   # Install from https://ollama.ai
-   
-   # Verify installation
-   ollama list
-   
-   # Ensure llama3.2 model is available
-   ollama run llama3.2:latest "reply with: OK"
-   # Should output: OK
-   ```
+Install Ollama from https://ollama.ai, then verify:
+```bash
+ollama list
+ollama run llama3.2:latest "test"
+```
 
 ## Quick Start
 
-### 1. Backend Setup
-
-**Option A: Using Conda (Recommended)**
+**Backend:**
 ```bash
 cd backend
-
-# Create conda environment
 conda create -n property-insights python=3.11 -y
 conda activate property-insights
-
-# Install dependencies
 pip install -r requirements.txt
-
-# (Optional) Create .env file for custom configuration
-cp .env.example .env
-```
-
-**Option B: Using venv**
-```bash
-cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # macOS/Linux
-# venv\Scripts\activate    # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-```
-
-### 3. Start the Application
-
-**Terminal 1 - Start Backend:**
-```bash
-cd backend
-conda activate property-insights  # or: source venv/bin/activate
 cd app
 python3 main.py
 ```
 
-Backend will be available at: **http://localhost:8000**
-- API docs: http://localhost:8000/docs
-- Health check: http://localhost:8000/health
-
-**Terminal 2 - Start Frontend:**
+**Frontend:**
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-Frontend will be available at: **http://localhost:3000**
-
-### 4. Verify Everything Works
-
-1. Ensure Ollama is running: `ollama list`
-2. Open http://localhost:3000 in your browser
-3. Fill in property information and click "Analyze Property"
-4. Wait 10-30 seconds for AI analysis to complete
-
-## Default Ports
-
-| Service  | Port | URL |
-|----------|------|-----|
-| Frontend | 3000 | http://localhost:3000 |
-| Backend  | 8000 | http://localhost:8000 |
-| Ollama   | 11434 | http://localhost:11434 |
-
-**Port Conflicts?**
-- Backend: Edit `backend/.env` and set `API_PORT=8001`
-- Frontend: Run `npm run dev -- -p 3001`
-- Ollama: Edit `backend/.env` and set `OLLAMA_HOST=http://localhost:YOUR_PORT`
+**Access:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
 ## Configuration
 
-### Backend Environment Variables
-
-Create `backend/.env` (optional, defaults work out of the box):
-
+**Backend** (`backend/.env`):
 ```bash
-# Ollama Configuration
 OLLAMA_HOST=http://localhost:11434
 OLLAMA_MODEL=llama3.2:latest
-
-# API Configuration
 API_PORT=8000
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+CORS_ORIGINS=http://localhost:3000
 ```
 
-### Frontend Environment Variables
-
-Create `frontend/.env.local` (optional):
-
+**Frontend** (`frontend/.env.local`):
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-## API Documentation
+## How It Works
 
-Once the backend is running, visit http://localhost:8000/docs for interactive API documentation.
+1. **Search**: User searches for property by address/city/zip
+2. **Fetch**: System retrieves data from 3 mock sources (with intentional conflicts)
+3. **Analyze**: AI performs 3 LLM calls:
+   - Resolve conflicts field-by-field with reasoning
+   - Generate unified summary with quality assessment
+   - Create actionable insights
+4. **Display**: Frontend shows raw sources, conflicts, resolution, and analysis
 
-### Main Endpoint
+**Example Conflict Resolution:**
 
-**POST** `/api/property/analyze`
-
-Request body (all fields optional, provide at least one):
-```json
-{
-  "address": "123 Main St, San Francisco, CA",
-  "price": 1200000,
-  "bedrooms": 3,
-  "bathrooms": 2.5,
-  "square_feet": 1800,
-  "year_built": 2005,
-  "description": "Beautiful modern home..."
-}
+```
+Field: bedrooms
+Sources: Zillow (5), Redfin (4), Public Records (4)
+AI Decision: 4 bedrooms (85% confidence)
+Reasoning: "Redfin and public records agree. Zillow likely counting 
+finished attic as bedroom, which may not meet code requirements."
 ```
 
-Response:
-```json
-{
-  "property_summary": {
-    "key_features": ["3 bedrooms", "2.5 bathrooms"],
-    "property_type": "Single Family Home",
-    "highlights": ["Modern updates", "Prime location"],
-    "concerns": ["Price above market average"]
-  },
-  "analysis": "Comprehensive analysis text...",
-  "insights": ["Key insight 1", "Key insight 2"],
-  "confidence_score": 0.85
-}
-```
+## API Endpoints
 
-## Architecture Decisions
+**GET** `/api/property/search?q={query}`
+- Search properties by address, city, or zip
+- Returns: List of PropertySearchResult
 
-### Why local LLM (Ollama)?
-- ✅ Free, no API costs
-- ✅ Complete data privacy
-- ✅ No rate limits
-- ❌ Limited model capabilities vs GPT-4
-- ❌ Requires local compute resources
+**GET** `/api/property/{property_id}/analyze`
+- Analyze property from multiple sources
+- Returns: PropertyAnalysis with conflict resolution
 
-### Why separate frontend/backend?
-- Independent development and deployment
-- API can be reused by other clients
-- Clear separation of concerns
+See http://localhost:8000/docs for interactive documentation.
 
-### Why no database?
-- Simplifies MVP development
-- No maintenance overhead
-- Easy to add later (SQLite/PostgreSQL)
+## Design Decisions
+
+**Mock Data Sources**
+- Real APIs (Zillow/Redfin) require authentication, have rate limits, and legal constraints
+- Mock sources allow controlled demonstration of conflict resolution
+- Easy to add realistic inconsistencies for testing
+
+**Local LLM (Ollama)**
+- Pros: Free, private, no rate limits, works offline
+- Cons: Slower (20-40s per analysis), less capable than GPT-4
+- Trade-off: Accessibility and privacy over speed
+
+**No Database**
+- Simplifies setup and deployment
+- Focuses on core conflict resolution logic
+- Easy to add PostgreSQL/SQLite later
+
+## Approach & Trade-offs
+
+**Multi-Source Integration**
+- Simulates real-world scenario where data is scattered
+- Each source has different strengths (Redfin: recent prices, Public: official records)
+- AI learns to weigh source reliability contextually
+
+**Conflict Resolution Strategy**
+- LLM analyzes conflicts with domain knowledge
+- Considers recency, source authority, and cross-validation
+- Provides transparency through reasoning
+- Assigns confidence scores for decision support
+
+**Performance vs Accuracy**
+- 3 LLM calls per analysis (40-60s total)
+- Could reduce to 1 call but lose granular reasoning
+- Trade-off: Detailed analysis over speed
 
 ## Future Enhancements
 
-**Short-term:** Streaming responses, multi-language support, public data integration, enhanced validation
+**Short-term**
+- Streaming LLM responses for real-time feedback
+- Additional mock sources (Trulia, Realtor.com)
+- Historical data tracking and trend analysis
+- PDF report export
 
-**Medium-term:** User authentication, database persistence, PDF export, property comparison, image analysis
+**Medium-term**
+- Real API integration with Zillow/Redfin
+- Database persistence for analysis history
+- User authentication and saved searches
+- Advanced conflict resolution with weighted trust scores
 
-**Long-term:** RAG with real estate knowledge base, fine-tuned models, real-time market data, mobile app
+**Long-term**
+- RAG system with real estate knowledge base
+- Fine-tuned model for real estate domain
+- Image analysis from listing photos
+- Predictive pricing and market timing models
+
+## Development
+
+**Run tests:**
+```bash
+# Backend
+cd backend
+pytest
+
+# Frontend
+cd frontend
+npm test
+```
+
+**Linting:**
+```bash
+# Backend
+cd backend
+pylint app/
+
+# Frontend
+cd frontend
+npm run lint
+```
+
+## Troubleshooting
+
+**Ollama connection issues:**
+```bash
+ollama serve
+ollama list
+```
+
+**Port conflicts:**
+```bash
+# Backend
+lsof -ti:8000 | xargs kill
+
+# Frontend
+lsof -ti:3000 | xargs kill
+```
+
+**Analysis timeout:**
+- Increase timeout in `frontend/lib/api.ts` (default: 120s)
+- Check Ollama is running: `ollama ps`

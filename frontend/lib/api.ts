@@ -3,7 +3,7 @@
  */
 
 import axios, { AxiosError } from 'axios'
-import { PropertyInput, PropertyAnalysis, ApiError } from './types'
+import { PropertySearchResult, PropertyAnalysis, ApiError } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -17,13 +17,34 @@ const apiClient = axios.create({
 
 export class PropertyApiClient {
   /**
-   * Analyze property information
+   * Search for properties
    */
-  static async analyzeProperty(data: PropertyInput): Promise<PropertyAnalysis> {
+  static async searchProperties(query: string): Promise<PropertySearchResult[]> {
     try {
-      const response = await apiClient.post<PropertyAnalysis>(
-        '/api/property/analyze',
-        data
+      const response = await apiClient.get<PropertySearchResult[]>(
+        '/api/property/search',
+        { params: { q: query } }
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiError>
+        throw new Error(
+          axiosError.response?.data?.detail || 
+          'Failed to search properties. Please try again.'
+        )
+      }
+      throw error
+    }
+  }
+
+  /**
+   * Analyze property by ID
+   */
+  static async analyzeProperty(propertyId: string): Promise<PropertyAnalysis> {
+    try {
+      const response = await apiClient.get<PropertyAnalysis>(
+        `/api/property/${propertyId}/analyze`
       )
       return response.data
     } catch (error) {
@@ -48,17 +69,5 @@ export class PropertyApiClient {
     } catch {
       return false
     }
-  }
-
-  /**
-   * Check property service health
-   */
-  static async checkPropertyServiceHealth(): Promise<{
-    service: string
-    status: string
-    llm_available: boolean
-  }> {
-    const response = await apiClient.get('/api/property/health')
-    return response.data
   }
 }
