@@ -33,14 +33,16 @@ property-insights/
 
 ## Prerequisites
 
-1. **Python 3.9+**
+1. **Python 3.9+** and **Conda** (or venv)
    ```bash
    python3 --version
+   conda --version
    ```
 
-2. **Node.js 18+**
+2. **Node.js 18+** and **npm**
    ```bash
    node --version
+   npm --version
    ```
 
 3. **Ollama** (must be installed and running)
@@ -59,21 +61,32 @@ property-insights/
 
 ### 1. Backend Setup
 
+**Option A: Using Conda (Recommended)**
 ```bash
 cd backend
 
-# Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate  # macOS/Linux
-# venv\Scripts\activate    # Windows
+# Create conda environment
+conda create -n property-insights python=3.11 -y
+conda activate property-insights
 
 # Install dependencies
 pip install -r requirements.txt
 
 # (Optional) Create .env file for custom configuration
 cp .env.example .env
+```
+
+**Option B: Using venv**
+```bash
+cd backend
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # macOS/Linux
+# venv\Scripts\activate    # Windows
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
 ### 2. Frontend Setup
@@ -89,8 +102,9 @@ npm install
 
 **Terminal 1 - Start Backend:**
 ```bash
-cd backend/app
-source ../venv/bin/activate  # if not already activated
+cd backend
+conda activate property-insights  # or: source venv/bin/activate
+cd app
 python3 main.py
 ```
 
