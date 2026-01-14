@@ -54,7 +54,7 @@ def get_zillow_data(property_id: str) -> Dict[str, Any]:
             "price": 1450000,
             "bedrooms": 4,
             "bathrooms": 3,
-            "square_feet": None,  # Missing
+            "square_feet": 2620,  # Slightly different measurement
             "year_built": 2010,
             "lot_size": 7200,
             "property_type": "Single Family",
@@ -140,7 +140,7 @@ def get_redfin_data(property_id: str) -> Dict[str, Any]:
             "price": 1695000,
             "bedrooms": 3,
             "bathrooms": 2.5,
-            "square_feet": None,  # Missing
+            "square_feet": 2380,  # Slightly different measurement
             "year_built": 1916,  # Slight conflict
             "lot_size": 5000,
             "property_type": "Single Family Residential",
@@ -162,7 +162,7 @@ def get_public_records_data(property_id: str) -> Dict[str, Any]:
             "source": "Public Records",
             "assessed_value": 1180000,  # Tax assessment (usually lower)
             "bedrooms": 3,
-            "bathrooms": 2,  # May not count half baths
+            "bathrooms": 2.5,  # Full bathroom count
             "square_feet": 1822,
             "year_built": 2005,
             "lot_size": None,  # N/A for condos
