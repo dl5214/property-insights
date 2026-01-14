@@ -11,38 +11,30 @@ export default function ConflictResolutionView({ resolution }: ConflictResolutio
   const hasConflicts = conflictingFields.length > 0
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-2xl font-bold text-gray-900">Conflict Resolution</h3>
-        {hasConflicts && (
-          <span className="px-3 py-1 bg-amber-100 text-amber-800 text-sm font-semibold rounded-full">
-            {conflictingFields.length} conflict{conflictingFields.length > 1 ? 's' : ''} detected
-          </span>
-        )}
-      </div>
+    <div className="bg-white rounded-lg border border-gray-200 p-4">
 
       {resolution.conflict_summary && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-sm text-amber-900">{resolution.conflict_summary}</p>
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
+          {resolution.conflict_summary}
         </div>
       )}
 
       {hasConflicts ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {conflictingFields.map((field, idx) => (
-            <div key={idx} className="border-2 border-amber-200 rounded-lg p-4 bg-amber-50">
-              <div className="flex items-start justify-between mb-3">
+            <div key={idx} className="border border-amber-200 rounded-lg p-3 bg-amber-50">
+              <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h4 className="font-bold text-gray-900 capitalize mb-1">
+                  <h4 className="font-semibold text-gray-900 capitalize text-sm mb-1">
                     {field.field_name.replace('_', ' ')}
                   </h4>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">Conflicting values:</span>
-                    <div className="flex flex-wrap gap-2">
+                    <span className="text-xs text-gray-600">Conflicting values:</span>
+                    <div className="flex flex-wrap gap-1">
                       {field.values.map((val, i) => (
                         <span
                           key={i}
-                          className="px-2 py-1 bg-white border border-amber-300 rounded text-sm font-medium text-gray-900"
+                          className="px-2 py-0.5 bg-white border border-amber-300 rounded text-xs font-medium text-gray-900"
                         >
                           {typeof val === 'number' && field.field_name === 'price' 
                             ? `$${val.toLocaleString()}`
@@ -53,24 +45,23 @@ export default function ConflictResolutionView({ resolution }: ConflictResolutio
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-gray-600 mb-1">Confidence</div>
-                  <div className="text-lg font-bold text-primary-600">
-                    {(field.confidence * 100).toFixed(0)}%
+                  <div className="text-xs text-gray-600">
+                    {(field.confidence * 100).toFixed(0)}% confidence
                   </div>
                 </div>
               </div>
 
-              <div className="mb-3 p-3 bg-white rounded border border-green-200">
-                <div className="text-xs font-semibold text-green-700 mb-1">RECOMMENDED VALUE</div>
-                <div className="text-xl font-bold text-gray-900">
+              <div className="mb-2 p-2 bg-white rounded border border-green-200">
+                <div className="text-xs font-semibold text-green-700">AI Recommended</div>
+                <div className="text-lg font-bold text-gray-900">
                   {typeof field.recommended_value === 'number' && field.field_name === 'price'
                     ? `$${field.recommended_value.toLocaleString()}`
                     : field.recommended_value}
                 </div>
               </div>
 
-              <div className="text-sm text-gray-700">
-                <span className="font-semibold">AI Reasoning:</span> {field.reasoning}
+              <div className="text-xs text-gray-700">
+                <span className="font-semibold">Reasoning:</span> {field.reasoning}
               </div>
             </div>
           ))}

@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
-import { PropertySearchResult, PropertyAnalysis } from '@/lib/types'
+import { useEffect, useState } from 'react'
+import { PropertySearchResult, PropertyAnalysis, DataSourceInfo } from '@/lib/types'
 import { PropertyApiClient } from '@/lib/api'
+import { get_property_data_from_sources } from '@/lib/mockData'
+import UnifiedSummary from './UnifiedSummary'
 import DataSourcesView from './DataSourcesView'
 import ConflictResolutionView from './ConflictResolutionView'
-import InsightsView from './InsightsView'
 
 interface AnalysisReportProps {
   property: PropertySearchResult
@@ -22,8 +23,17 @@ export default function AnalysisReport({
   onAnalysisStart,
   onAnalysisComplete
 }: AnalysisReportProps) {
+  const [rawSources, setRawSources] = useState<DataSourceInfo[]>([])
+  const [showRawData, setShowRawData] = useState(false)
+  const [showConflicts, setShowConflicts] = useState(false)
+  const [showInsights, setShowInsights] = useState(false)
   
   useEffect(() => {
+    // Immediately show raw data
+    const sources = get_property_data_from_sources(property.id)
+    setRawSources(sources)
+    
+    // Start AI analysis in background
     if (!analysis && !isAnalyzing) {
       startAnalysis()
     }
@@ -41,193 +51,110 @@ export default function AnalysisReport({
     }
   }
 
-  if (isAnalyzing) {
-    return (
-      <div className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto mb-6"></div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Analyzing Property...</h3>
-              <p className="text-gray-600 mb-6">
-                Fetching data from multiple sources and resolving conflicts
-              </p>
-              <div className="space-y-3 text-sm text-gray-500">
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-2 h-2 bg-primary-600 rounded-full animate-pulse"></div>
-                  <span>Querying Zillow, Redfin, and Public Records</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-2 h-2 bg-primary-600 rounded-full animate-pulse animation-delay-200"></div>
-                  <span>Identifying data conflicts and inconsistencies</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-2 h-2 bg-primary-600 rounded-full animate-pulse animation-delay-400"></div>
-                  <span>Generating AI-powered insights</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (!analysis) {
-    return (
-      <div className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-            <p className="text-gray-600">Failed to analyze property. Please try again.</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const confidenceColor = 
-    analysis.confidence_score >= 0.8 ? 'text-green-600' :
-    analysis.confidence_score >= 0.6 ? 'text-yellow-600' :
-    'text-red-600'
-
-  const confidenceBg = 
-    analysis.confidence_score >= 0.8 ? 'bg-green-600' :
-    analysis.confidence_score >= 0.6 ? 'bg-yellow-600' :
-    'bg-red-600'
+  const conflictCount = analysis?.conflict_resolution.field_analyses.filter(fa => fa.conflicts).length || 0
 
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         {/* Property Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">{analysis.address}</h2>
-              <p className="text-gray-600">Property ID: {analysis.property_id}</p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-600 mb-1">Data Confidence</div>
-              <div className={`text-3xl font-bold ${confidenceColor}`}>
-                {(analysis.confidence_score * 100).toFixed(0)}%
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4">
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className={`h-3 rounded-full transition-all ${confidenceBg}`}
-                style={{ width: `${analysis.confidence_score * 100}%` }}
-              />
-            </div>
-          </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{property.address}</h2>
+          <p className="text-sm text-gray-600">{property.city}, {property.state} {property.zip}</p>
         </div>
 
-        {/* Data Sources */}
-        <DataSourcesView sources={analysis.data_sources} />
-
-        {/* Conflict Resolution */}
-        <ConflictResolutionView resolution={analysis.conflict_resolution} />
-
-        {/* Unified Summary */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Unified Property Summary</h3>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {analysis.property_summary.price && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Price</div>
-                <div className="text-2xl font-bold text-gray-900">
-                  ${analysis.property_summary.price.toLocaleString()}
-                </div>
-              </div>
-            )}
-            
-            {analysis.property_summary.bedrooms && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Bedrooms</div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {analysis.property_summary.bedrooms}
-                </div>
-              </div>
-            )}
-            
-            {analysis.property_summary.bathrooms && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Bathrooms</div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {analysis.property_summary.bathrooms}
-                </div>
-              </div>
-            )}
-            
-            {analysis.property_summary.square_feet && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Square Feet</div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {analysis.property_summary.square_feet.toLocaleString()}
-                </div>
-              </div>
-            )}
-            
-            {analysis.property_summary.year_built && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Year Built</div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {analysis.property_summary.year_built}
-                </div>
-              </div>
-            )}
-            
-            {analysis.property_summary.property_type && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">Type</div>
-                <div className="text-xl font-bold text-gray-900">
-                  {analysis.property_summary.property_type}
-                </div>
-              </div>
-            )}
+        {/* Unified Summary - THE MAIN PRODUCT */}
+        {analysis ? (
+          <UnifiedSummary 
+            summary={analysis.property_summary}
+            confidence={analysis.confidence_score}
+            analysis={analysis.analysis}
+            insights={analysis.insights}
+            showInsights={showInsights}
+            onToggleInsights={() => setShowInsights(!showInsights)}
+          />
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+              <h3 className="text-lg font-semibold text-gray-900">Generating AI Analysis...</h3>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Integrating data from {rawSources.length} sources and resolving conflicts
+            </p>
           </div>
+        )}
 
-          {analysis.property_summary.highlights.length > 0 && (
-            <div className="mb-4">
-              <h4 className="font-semibold text-gray-900 mb-2">✨ Highlights</h4>
-              <ul className="space-y-1">
-                {analysis.property_summary.highlights.map((highlight, idx) => (
-                  <li key={idx} className="text-green-700 text-sm flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
+        {/* Expandable Sections - Details for those who want to dig deeper */}
+        <div className="space-y-3">
+          {/* Raw Data Sources */}
+          <button
+            onClick={() => setShowRawData(!showRawData)}
+            className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:border-primary-300 transition-colors text-left"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="font-semibold text-gray-900">Raw Data from {rawSources.length} Sources</span>
+                <span className="text-xs text-gray-500">(Click to {showRawData ? 'hide' : 'view'})</span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-gray-400 transition-transform ${showRawData ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+          
+          {showRawData && rawSources.length > 0 && (
+            <div className="pl-4">
+              <DataSourcesView sources={rawSources} />
             </div>
           )}
 
-          {analysis.property_summary.concerns.length > 0 && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">⚠️ Concerns</h4>
-              <ul className="space-y-1">
-                {analysis.property_summary.concerns.map((concern, idx) => (
-                  <li key={idx} className="text-amber-700 text-sm flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>{concern}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Conflict Resolution */}
+          {analysis && (
+            <>
+              <button
+                onClick={() => setShowConflicts(!showConflicts)}
+                className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:border-primary-300 transition-colors text-left"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <span className="font-semibold text-gray-900">How AI Resolved Conflicts</span>
+                    {conflictCount > 0 && (
+                      <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full">
+                        {conflictCount} conflict{conflictCount > 1 ? 's' : ''}
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-500">(Click to {showConflicts ? 'hide' : 'view'})</span>
+                  </div>
+                  <svg
+                    className={`w-5 h-5 text-gray-400 transition-transform ${showConflicts ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+
+              {showConflicts && (
+                <div className="pl-4">
+                  <ConflictResolutionView resolution={analysis.conflict_resolution} />
+                </div>
+              )}
+            </>
           )}
         </div>
-
-        {/* Comprehensive Analysis */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Comprehensive Analysis</h3>
-          <div className="prose prose-sm max-w-none">
-            <p className="text-gray-700 whitespace-pre-line leading-relaxed">{analysis.analysis}</p>
-          </div>
-        </div>
-
-        {/* Insights */}
-        <InsightsView insights={analysis.insights} />
       </div>
     </div>
   )

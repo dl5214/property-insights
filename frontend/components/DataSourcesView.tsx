@@ -18,18 +18,14 @@ export default function DataSourcesView({ sources }: DataSourcesViewProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">Data Sources</h3>
-      <p className="text-gray-600 mb-4 text-sm">
-        We fetched data from {sources.length} different sources. Click to expand and see details.
-      </p>
+    <div className="bg-white rounded-lg border border-gray-200 p-4">
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {sources.map((source, idx) => (
-          <div key={idx} className="border-2 border-gray-200 rounded-lg overflow-hidden">
+          <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden">
             <button
               onClick={() => setExpandedSource(expandedSource === source.source ? null : source.source)}
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              className="w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getSourceColor(source.source)}`}>
@@ -52,47 +48,47 @@ export default function DataSourcesView({ sources }: DataSourcesViewProps) {
             </button>
 
             {expandedSource === source.source && (
-              <div className="px-4 pb-4 border-t border-gray-200 bg-gray-50">
-                <div className="grid md:grid-cols-2 gap-3 mt-3">
+              <div className="px-3 pb-3 border-t border-gray-200 bg-gray-50">
+                <div className="grid md:grid-cols-2 gap-2 mt-2 text-xs">
                   {source.price && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Price:</span>{' '}
                       <span className="text-gray-900">${source.price.toLocaleString()}</span>
                     </div>
                   )}
                   {source.bedrooms && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Bedrooms:</span>{' '}
                       <span className="text-gray-900">{source.bedrooms}</span>
                     </div>
                   )}
                   {source.bathrooms && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Bathrooms:</span>{' '}
                       <span className="text-gray-900">{source.bathrooms}</span>
                     </div>
                   )}
                   {source.square_feet && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Sq Ft:</span>{' '}
                       <span className="text-gray-900">{source.square_feet.toLocaleString()}</span>
                     </div>
                   )}
                   {source.year_built && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Year:</span>{' '}
                       <span className="text-gray-900">{source.year_built}</span>
                     </div>
                   )}
                   {source.property_type && (
-                    <div className="text-sm">
+                    <div>
                       <span className="font-medium text-gray-700">Type:</span>{' '}
                       <span className="text-gray-900">{source.property_type}</span>
                     </div>
                   )}
                 </div>
                 {source.description && (
-                  <div className="mt-3 text-sm">
+                  <div className="mt-2 text-xs">
                     <span className="font-medium text-gray-700">Description:</span>
                     <p className="text-gray-600 mt-1">{source.description}</p>
                   </div>
