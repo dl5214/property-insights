@@ -56,12 +56,13 @@ property-insights/
     ├── components/
     │   ├── SearchSection.tsx          # Property search interface
     │   ├── AnalysisReport.tsx         # Analysis orchestration
+    │   ├── UnifiedSummary.tsx         # Main analysis display
     │   ├── DataSourcesView.tsx        # Source comparison
-    │   ├── ConflictResolutionView.tsx # Conflict visualization
-    │   └── InsightsView.tsx           # Key recommendations
+    │   └── ConflictResolutionView.tsx # Conflict visualization
     └── lib/
         ├── api.ts                     # API client
-        └── types.ts                   # TypeScript definitions
+        ├── types.ts                   # TypeScript definitions
+        └── mockData.ts                # Mock data for immediate display
 ```
 
 ## Prerequisites
